@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora de Elegibilidad - Seguro Médico sin Papeles</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; background:#fafafa; color:#333; }
+    label { display:block; margin:10px 0 5px; }
+    input, select { padding:8px; width: 100%; max-width:300px; margin-bottom:15px; }
+    button { background:#007BFF; color:white; border:none; padding:10px 20px; cursor:pointer; border-radius:6px; }
+    button:hover { background:#0056b3; }
+    #resultado { margin-top:20px; font-weight:bold; font-size:16px; }
+    .nota { background:#fff8e1; border:1px dashed #ff9800; padding:12px; margin:20px 0; font-size:14px; color:#444; }
+  </style>
+</head>
+<body>
+
+<h2>🧮 Calculadora de elegibilidad</h2>
+
+<form onsubmit="calcular(); return false;">
+  <label for="estado">Estado:</label>
+  <select id="estado" required>
+    <option value="CA">California</option>
+    <option value="NY">Nueva York</option>
+    <option value="NJ">Nueva Jersey</option>
+    <option value="CO">Colorado</option>
+    <option value="IL">Illinois</option>
+    <option value="MN">Minnesota</option>
+    <option value="OR">Oregon</option>
+    <option value="WA">Washington</option>
+  </select>
+
+  <label for="personas">Personas en el hogar:</label>
+  <input type="number" id="personas" min="1" required>
+
+  <label for="ingresos">Ingresos mensuales (USD):</label>
+  <input type="number" id="ingresos" min="0" required>
+
+  <label><input type="checkbox" id="embarazo"> ¿Eres mujer embarazada?</label>
+  <label><input type="checkbox" id="hijos"> ¿Tienes hijos menores de 18 años?</label>
+  <label><input type="checkbox" id="mayor"> ¿Hay adultos mayores en el hogar?</label>
+
+  <button type="submit">Calcular</button>
+</form>
+
+<p id="resultado"></p>
+
+<div class="nota">
+  ⚠️ <strong>Importante:</strong> El cálculo que ves aquí es una guía aproximada. 
+  Cada estado tiene sus propias reglas y requisitos. 
+  Usa esta información como orientación inicial y confirma tu caso en la página oficial.
+</div>
+
+<script>
+function calcular() {
+  const estado = document.getElementById('estado').value;
+  const personas = parseInt(document.getElementById('personas').value);
+  const ingresosMensuales = parseInt(document.getElementById('ingresos').value);
+  const ingresosAnuales = ingresosMensuales * 12;
+
+  // FPL simplificado (2024)
+  const fplBase = 15060;
+  const fplPorPersona = 5380;
+  const fpl = fplBase + (personas - 1) * fplPorPersona;
+
+  let mensaje = "";
+  if (ingresosAnuales <= fpl * 1.38) {
+    mensaje = "✅ Probablemente calificas para Medicaid/Medi-Cal o un programa similar en " + estado;
+  } else if (ingresosAnuales <= fpl * 2.0) {
+    mensaje = "✅ Podrías aplicar a planes de bajo costo en " + estado;
+  } else {
+    mensaje = "⚠️ Tus ingresos parecen altos, revisa opciones privadas o estatales.";
+  }
+
+  document.getElementById('resultado').innerText = mensaje;
+}
+</script>
+
+</body>
+</html>
